@@ -25,29 +25,14 @@ class LestsTell_LoginTests: XCTestCase {
         try super.tearDownWithError()
 
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
     
-    func testLoginIsSuccessful() throws {
-        
-        var isLogged = false
+    func testLoginIsSuccessful() {
         let promise = expectation(description: "")
         //when
-        sut.login(username: "primary85@mail.ru", password: "R@madan20211"){ result in
+        sut.login(username: "primary85+14@mail.ru", password: "123456"){ result in
             switch result {
             case .success(_):
-                //promise.fulfill()
-                XCTFail("error")
+                promise.fulfill()
                 return
             case .failure(_):
                 XCTFail("error")
@@ -55,6 +40,44 @@ class LestsTell_LoginTests: XCTestCase {
             }
         }
         //then
-        wait(for: [promise], timeout: 5)    }
+        wait(for: [promise], timeout: 5)
+    }
+    
+    func testLoginIsFailed() {
 
+        let promise = expectation(description: "")
+        //when
+        sut.login(username: "primary85+14@mail.ru", password: "123123123"){ result in
+            switch result {
+            case .success(_):
+                XCTFail("error")
+                return
+            case .failure(_):
+                promise.fulfill()
+                return
+            }
+        }
+        //then
+        wait(for: [promise], timeout: 5)
+    }
+    
+    func logoutIsSuccess() {
+        let promise = expectation(description: "")
+        sut.login(username: "primary85+14@mail.ru", password: "123456") { result in
+            switch result {
+            case .success(let token):
+                self.sut.logout(token:token){ result in
+                    switch result {
+                    case .success:
+                        promise.fulfill()
+                    case.failure:
+                        XCTFail("lgout is failed")
+                    }
+                    
+                }
+            case.failure(_):
+            XCTFail("Loging is failed")
+            }
+        }
+    }
 }
